@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -27,14 +28,19 @@ export class TrackController {
     ]),
   )
   create(@Body() dto: CreateTrackDto, @UploadedFiles() files) {
-    console.log(files);
     const { picture, audio } = files;
     return this.trackService.create(dto, picture[0], audio[0]);
   }
 
   @Get()
-  getAll() {
-    return this.trackService.getAll();
+  getAll(@Query('count') count: number, @Query('offset') offset: number) {
+    return this.trackService.getAll(Number(count), Number(offset));
+  }
+
+  @Get('/search')
+  search(@Query('query') query: string) {
+    console.log(query);
+    return this.trackService.search(query);
   }
 
   @Get(':id')
